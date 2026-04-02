@@ -346,13 +346,13 @@ class MaskedLanguageModelingDataset(Dataset):
         super().__init__()
         self.genome_cpg, self.genome_feature = {}, {}
         self.genome = np.load("./datasets/genome.npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_cpg[chrom] = np.load("./datasets/position/"+chrom+".npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_feature[chrom] = np.load(data_path + "/methyl_data/"+str(chrom)+".npy",allow_pickle=True)
 
         data_path, self.methylation_data = Path(data_path), []
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_file = f'genome_cpg/{chrom}.json'
             methylation_data = dataset_factory(data_path / data_file, in_memory)
@@ -368,7 +368,7 @@ class MaskedLanguageModelingDataset(Dataset):
 
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-100), min(idx+100, len(self.genome_feature[chrom]))
@@ -379,7 +379,7 @@ class MaskedLanguageModelingDataset(Dataset):
         DNA_data, feature_data, positions = tuple(zip(*batch))
         DNA_data = torch.from_numpy(pad_sequences(DNA_data, constant_value = 0))
         feature_data = torch.from_numpy(pad_sequences(feature_data, constant_value = 0))
-        positions = torch.from_numpy(np.array(positions, dtype=np.long))
+        positions = torch.from_numpy(np.array(positions, dtype=np.int64))
 
         return {'DNA_data': DNA_data,
                 'position': positions,
@@ -405,16 +405,16 @@ class MaskedLanguageModelingDataset(Dataset):
 
         self.genome_cpg, self.genome_feature, self.genome_methyl = {}, {}, {}
         self.genome = np.load("./datasets/genome.npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_cpg[chrom] = np.load("./datasets/position/"+chrom+".npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_feature[chrom] = np.load(data_path + "/feature_data/"+str(chrom)+".npy",allow_pickle=True)
-        for chrom in split:
+        for chrom in [split]:
             self.genome_methyl[chrom] = np.load(data_path + "/methyl_data/"+str(chrom)+".npy",allow_pickle=True)
 
         self.methylation_data = []
         data_path = Path(data_path)
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_file = f'{chrom}.json'
             methylation_data = dataset_factory(data_path / data_file, in_memory)
@@ -428,11 +428,11 @@ class MaskedLanguageModelingDataset(Dataset):
         item_data =  self.methylation_data[index]
         position, chrom, strand = item_data["pos"], item_data["chrom"], item_data["strand"]
         high_methyl, low_methyl = item_data["high_methyl"], item_data["low_methyl"]
-        high_ids, low_ids = np.array(high_methyl,dtype=np.long), np.array(low_methyl,dtype=np.long)
+        high_ids, low_ids = np.array(high_methyl,dtype=np.int64), np.array(low_methyl,dtype=np.int64)
 
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-100), min(idx+100, len(self.genome_feature[chrom]))
@@ -472,13 +472,13 @@ class MaskedLanguageModelingDataset(Dataset):
         super().__init__()
         self.genome_cpg, self.genome_feature = {}, {}
         self.genome = np.load("./datasets/mm10.npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_cpg[chrom] = np.load("./datasets/position/mouse_position/"+chrom+".npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_feature[chrom] = np.load(data_path + "/methyl_data/"+str(chrom)+".npy",allow_pickle=True)
 
         data_path, self.methylation_data = Path(data_path), []
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_file = f'mouse_cpg/{chrom}.json'
             methylation_data = dataset_factory(data_path / data_file, in_memory)
@@ -494,7 +494,7 @@ class MaskedLanguageModelingDataset(Dataset):
 
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-100), min(idx+100, len(self.genome_feature[chrom]))
@@ -505,7 +505,7 @@ class MaskedLanguageModelingDataset(Dataset):
         DNA_data, feature_data, positions = tuple(zip(*batch))
         DNA_data = torch.from_numpy(pad_sequences(DNA_data, constant_value = 0))
         feature_data = torch.from_numpy(pad_sequences(feature_data, constant_value = 0))
-        positions = torch.from_numpy(np.array(positions, dtype=np.long))
+        positions = torch.from_numpy(np.array(positions, dtype=np.int64))
 
         return {'DNA_data': DNA_data,
                 'position': positions,
@@ -531,16 +531,16 @@ class MaskedLanguageModelingDataset(Dataset):
 
         self.genome_cpg, self.genome_feature, self.genome_methyl = {}, {}, {}
         self.genome = np.load("./datasets/mm10.npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_cpg[chrom] = np.load("./datasets/position/mouse_position/"+chrom+".npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_feature[chrom] = np.load(data_path + "/feature_data/"+str(chrom)+".npy",allow_pickle=True)
-        for chrom in split:
+        for chrom in [split]:
             self.genome_methyl[chrom] = np.load(data_path + "/methyl_data/"+str(chrom)+".npy",allow_pickle=True)
 
         self.methylation_data = []
         data_path = Path(data_path)
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_file = f'{chrom}.json'
             methylation_data = dataset_factory(data_path / data_file, in_memory)
@@ -554,11 +554,11 @@ class MaskedLanguageModelingDataset(Dataset):
         item_data =  self.methylation_data[index]
         position, chrom, strand = item_data["pos"], item_data["chrom"], item_data["strand"]
         high_methyl, low_methyl = item_data["high_methyl"], item_data["low_methyl"]
-        high_ids, low_ids = np.array(high_methyl,dtype=np.long), np.array(low_methyl,dtype=np.long)
+        high_ids, low_ids = np.array(high_methyl,dtype=np.int64), np.array(low_methyl,dtype=np.int64)
 
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-100), min(idx+100, len(self.genome_feature[chrom]))
@@ -599,7 +599,7 @@ class MaskedLanguageModelingDataset(Dataset):
 
         self.genome = np.load("./datasets/genome.npy",allow_pickle=True).item() 
         self.methylation_data = []
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_path = Path(data_path)
             data_file = f'shuffle_data/{chrom}.json'
@@ -614,11 +614,11 @@ class MaskedLanguageModelingDataset(Dataset):
         item_data =  self.methylation_data[index]
         position, chrom, strand = item_data["pos"], item_data["chrom"], item_data["strand"]
         high_methyl, low_methyl = item_data["high_methyl"], item_data["low_methyl"]
-        high_ids, low_ids = np.array(high_methyl,dtype=np.long), np.array(low_methyl,dtype=np.long)
+        high_ids, low_ids = np.array(high_methyl,dtype=np.int64), np.array(low_methyl,dtype=np.int64)
 
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
         return DNA_data, high_ids, low_ids
 
     def collate_fn(self, batch: List[Any]) -> Dict[str, torch.Tensor]:
@@ -666,13 +666,13 @@ class MaskedLanguageModelingDataset(Dataset):
         position, chrom = item_data["pos"], item_data["chrom"]
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
         return DNA_data, position
 
     def collate_fn(self, batch: List[Any]) -> Dict[str, torch.Tensor]:
         DNA_data, positions = tuple(zip(*batch))
         DNA_data = torch.from_numpy(pad_sequences(DNA_data, constant_value = 0))
-        positions = torch.from_numpy(np.array(positions, dtype=np.long))
+        positions = torch.from_numpy(np.array(positions, dtype=np.int64))
         return {'DNA_data': DNA_data,
                 'position': positions}
 
@@ -695,16 +695,16 @@ class MaskedLanguageModelingDataset(Dataset):
         super().__init__()
 
         self.genome_cpg, self.genome_feature, self.genome_methyl = {}, {}, {}
-        for chrom in split:
+        for chrom in [split]:
             self.genome_cpg[chrom] = np.load("./datasets/position/"+chrom+".npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_feature[chrom] = np.load(data_path + "/feature_data/"+str(chrom)+".npy",allow_pickle=True)
-        for chrom in split:
+        for chrom in [split]:
             self.genome_methyl[chrom] = np.load(data_path + "/methyl_data/"+str(chrom)+".npy",allow_pickle=True)
 
         self.methylation_data = []
         data_path = Path(data_path)
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_file = f'{chrom}.json'
             methylation_data = dataset_factory(data_path / data_file, in_memory)
@@ -718,7 +718,7 @@ class MaskedLanguageModelingDataset(Dataset):
         item_data =  self.methylation_data[index]
         position, chrom, strand = item_data["pos"], item_data["chrom"], item_data["strand"]
         high_methyl, low_methyl = item_data["high_methyl"], item_data["low_methyl"]
-        high_ids, low_ids = np.array(high_methyl,dtype=np.long), np.array(low_methyl,dtype=np.long)
+        high_ids, low_ids = np.array(high_methyl,dtype=np.int64), np.array(low_methyl,dtype=np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-100), min(idx+100, len(self.genome_feature[chrom]))
@@ -755,13 +755,13 @@ class MaskedLanguageModelingDataset(Dataset):
                  in_memory: bool = False):
         super().__init__()
         self.genome_cpg, self.genome_feature = {}, {}
-        for chrom in split:
+        for chrom in [split]:
             self.genome_cpg[chrom] = np.load("./datasets/position/"+chrom+".npy",allow_pickle=True).item()
-        for chrom in split:
+        for chrom in [split]:
             self.genome_feature[chrom] = np.load(data_path + "/feature_data/"+str(chrom)+".npy",allow_pickle=True)
 
         data_path, self.methylation_data = Path(data_path), []
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_file = f'genome_cpg/{chrom}.json'
             methylation_data = dataset_factory(data_path / data_file, in_memory)
@@ -783,7 +783,7 @@ class MaskedLanguageModelingDataset(Dataset):
     def collate_fn(self, batch: List[Any]) -> Dict[str, torch.Tensor]:
         feature_data, positions = tuple(zip(*batch))
         feature_data = torch.from_numpy(pad_sequences(feature_data, constant_value = 0))
-        positions = torch.from_numpy(np.array(positions, dtype=np.long))
+        positions = torch.from_numpy(np.array(positions, dtype=np.int64))
 
         return {'feature_data': feature_data,
                 'position': positions}
@@ -815,7 +815,7 @@ class MaskedLanguageModelingDataset(Dataset):
             self.genome_feature["chr"+str(idx)] = np.load(data_path + "/feature_data/chr"+str(idx)+".npy",allow_pickle=True)
 
         self.methylation_data = []
-        for chrom in split:
+        for chrom in [split]:
             print("reading\t" + str(chrom))
             data_path = Path(data_path)
             if chrom == "chr21": data_file = f'shuffle_data/{chrom}.json'
@@ -832,11 +832,11 @@ class MaskedLanguageModelingDataset(Dataset):
         item_data =  self.methylation_data[index]
         position, chrom, strand = item_data["pos"], item_data["chrom"], item_data["strand"]
         high_methyl, low_methyl = item_data["high_methyl"], item_data["low_methyl"]
-        high_ids, low_ids = np.array(high_methyl,dtype=np.long), np.array(low_methyl,dtype=np.long)
+        high_ids, low_ids = np.array(high_methyl,dtype=np.int64), np.array(low_methyl,dtype=np.int64)
 
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-50), min(idx+51, len(self.genome_feature[chrom]))
@@ -895,7 +895,7 @@ class MaskedLanguageModelingDataset(Dataset):
         position, chrom, strand = item_data["pos"], item_data["chrom"], item_data["strand"]
         start, stop = max(0, position-1000), min(position+1000+1, len(self.genome[chrom]))
         DNA_data = self.genome[chrom][start-1:stop-1]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
 
         idx = self.genome_cpg[chrom][position]
         begin, end = max(0, idx-50), min(idx+51, len(self.genome_feature[chrom]))
@@ -906,7 +906,7 @@ class MaskedLanguageModelingDataset(Dataset):
         DNA_data, feature_data, positions = tuple(zip(*batch))
         DNA_data = torch.from_numpy(pad_sequences(DNA_data, constant_value = 0))
         feature_data = torch.from_numpy(pad_sequences(feature_data, constant_value = 0))
-        positions = torch.from_numpy(np.array(positions, dtype=np.long))
+        positions = torch.from_numpy(np.array(positions, dtype=np.int64))
 
         return {'DNA_data': DNA_data,
                 'feature_data': feature_data,
@@ -958,14 +958,14 @@ class MaskedLanguageModelingDataset(Dataset):
         if len(DNA_data) == 0: DNA_data = np.zeros(self.window)
         index = self.window//2+(snp_pos-cpg_pos)
         DNA_data[index] = self.nucleotide_ind[alias]
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
         return DNA_data, cpg_pos, snp_pos
 
     def collate_fn(self, batch: List[Any]) -> Dict[str, torch.Tensor]:
         DNA_data, CPG_pos, VAR_pos = tuple(zip(*batch))
         DNA_data = torch.from_numpy(pad_sequences(DNA_data,0))
-        CPG_pos = torch.from_numpy(np.array(CPG_pos, dtype = np.long))
-        VAR_pos = torch.from_numpy(np.array(VAR_pos, dtype = np.long))
+        CPG_pos = torch.from_numpy(np.array(CPG_pos, dtype = np.int64))
+        VAR_pos = torch.from_numpy(np.array(VAR_pos, dtype = np.int64))
 
         return {'DNA_data': DNA_data,
                 'CPG_pos': CPG_pos,
@@ -1013,14 +1013,14 @@ class MaskedLanguageModelingDataset(Dataset):
         position = self.position[index]
         DNA_data = self.DNA_data[index]
         input_mask = np.ones_like(DNA_data)
-        DNA_data = np.array(DNA_data, dtype = np.long)
+        DNA_data = np.array(DNA_data, dtype = np.int64)
         return input_mask, DNA_data, label_data, position
 
     def collate_fn(self, batch: List[Any]) -> Dict[str, torch.Tensor]:
         input_mask, DNA_data, label_data, position = tuple(zip(*batch))
         input_mask = torch.from_numpy(pad_sequences(input_mask, 0))
         DNA_data = torch.from_numpy(pad_sequences(DNA_data,0))
-        position = torch.from_numpy(np.array(position,dtype=np.long))
+        position = torch.from_numpy(np.array(position,dtype=np.int64))
         label_data = torch.from_numpy(np.array(label_data, dtype = np.float32))
 
         return {'DNA_data': DNA_data,

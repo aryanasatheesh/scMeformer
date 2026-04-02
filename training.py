@@ -14,6 +14,7 @@ import time
 
 from tqdm import tqdm
 import torch
+from apex import amp
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset

@@ -445,7 +445,7 @@ class METH_CNN(nn.Module):
         task_size = sequence.size(dim=2)
         sequence = torch.unsqueeze(sequence, -1)
         sequence = torch.transpose(sequence, 2, 3)
-        sequence = torch.transpose(sequence, 1, 2)
+        sequence = torch.transpose(sequence, 1, 2).clone()
         sequence = F.relu(self.conv1(sequence))
         sequence = self.pool1(sequence)
         sequence = F.relu(self.conv2(sequence))
@@ -458,7 +458,7 @@ class METH_CNN(nn.Module):
         feature = self.dropout(feature)
 
         sequence = torch.squeeze(sequence, -1)
-        sequence = torch.transpose(sequence, 1, 2)
+        sequence = torch.transpose(sequence, 1, 2).clone()
         sequence = torch.transpose(sequence, 2, 3)
         sequence = self.dropout(sequence)
         return sequence, feature
@@ -626,7 +626,7 @@ class ProteinBertForMaskedLM(ProteinBertAbstractModel):
                 weights=None):
 
         #feature_data = torch.transpose(feature_data, 1, 2)
-        sequence_outputs, feature_outputs = self.feature_cnn(methyl_data)
+        sequence_outputs, feature_outputs = self.feature_cnn(methyl_data.float())
         feature_outputs = torch.mean(sequence_outputs, dim=2)
         #pooled_feature = torch.mean(feature_outputs, dim=1)
         #feature_outputs = torch.transpose(feature_outputs, 1, 2)
@@ -669,7 +669,7 @@ class ProteinBertForMaskedLM(ProteinBertAbstractModel):
                 high_ids=None,
                 low_ids=None):
 
-        sequence_outputs, feature_outputs = self.feature_cnn(methyl_data)
+        sequence_outputs, feature_outputs = self.feature_cnn(methyl_data.float())
         feature_outputs = torch.mean(sequence_outputs, dim=2)
         input_mask = torch.from_numpy(np.ones((feature_outputs.size()[0], feature_outputs.size()[1]))).cuda()
         outputs = self.feature_bert(feature_outputs, input_mask=input_mask)
@@ -753,7 +753,7 @@ class ProteinBertForMaskedLM(ProteinBertAbstractModel):
                 low_ids=None,
                 weights=None):
 
-        sequence_outputs, feature_outputs = self.feature_cnn(methyl_data)
+        sequence_outputs, feature_outputs = self.feature_cnn(methyl_data.float())
         feature_outputs = torch.mean(sequence_outputs, dim=2)
         input_mask = torch.from_numpy(np.ones((feature_outputs.size()[0], feature_outputs.size()[1]))).cuda()
         outputs = self.feature_bert(feature_outputs, input_mask=input_mask)
